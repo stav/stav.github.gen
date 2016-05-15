@@ -9,119 +9,92 @@ solid state device a.k.a. "hard-drive".  This is done by telling the operating
 system not to do too many unnecessary writes and configuring the temp dir to
 reside in memory.
 
-Features:
-
-* slim
-* sexy matte black
-* back-lit keyboard
-
-Hardware:
-
-* 256 Gb SSD
-* 7.7 GiB RAM
-* Intel Core i7-4500U CPU @ 1.80GHz x 4
-* Intel Haswell Mobile graphics @ 3200x1800
-
-Pros:
-
-* small & fast
-* Ubuntu runs on it out of the box (ubuntu's box)
-
-Cons:
-
-* no ethernet port, and...
-* the wifi card has issues
+System used: Grub2 | Linux | Debian | Ubuntu
 
 ## Ignore Access Time
 
-Tell the root partition device to not have to write access time journal entries
-
-In `/etc/fstab`:
-
-    UUID=d65e4ad3-6315-4838-97a1-ec574cb8575f / ext4 noatime,discard,errors=remount-ro  0  1
-
-* http://ubuntuforums.org/showthread.php?t=1928155&p=11702911#post11702911
-
-## Performance
-
-In `/etc/fstab`:
-
-    /dev/sda   /   ext4   noatime,nodiratime,discard,errors=remount-ro 0 1
-    tmpfs   /tmp       tmpfs   defaults,noatime,mode=1777   0  0
-
-In `/etc/rc.local`:
-
-    echo deadline > /sys/block/sda/queue/scheduler
-    echo 0 > /proc/sys/vm/swappiness
-
-In `/etc/default/grub`:
-
-    GRUB_CMDLINE_LINUX_DEFAULT="quiet splash elevator=deadline"
-
-From command line:
-
-    sudo update-grub2
-
-Moving the cache in Chrome is a little harder. The directory is hardcoded but
-you can use symbolic links to point it to a directory on another drive or to
-`/tmp`. You'll find the cache under `~/.cache/chromium`. You could also redirect
-the entire .cache directory as many programs use this for caching data.
-
-In Linux simply run `fdisk -cu (device)` on the drive you want to partition
-press `n` for new partition `p` for primary and enter a start sector of at
-least 2048. The general rule is that the starting sector must be divisible by
-512 but to cater for all variations of SSD page size and filesystem block size
-2048 is a good idea.
-
-* from apcmag.com/how-to-maximise-ssd-performance-with-linux.htm
-
-## Optimizations
-
-Reserve 10% SSD unallocated for over-provisioning
-
-### Noatime
-
-In `/etc/fstab`:
-
-    UUID=633603b4-665b-408b-beea-868e3d8c2428   /  ext4  noatime,errors=remount-ro 0  1
-    tmpfs      /tmp          tmpfs      defaults,noatime,mode=1777    0    0
-
-### TRIM
-
-`/etc/rc.local`:
-
-    fstrim -v /
-
-Not advised - "discard" in fstab:
+Use the `noatime` flag to tell OS not to update journal access time to files or
+directories.
 
 `/etc/fstab`:
 
-    UUID=f0ae2c59-83d2-42e7-81c4-2e870b6b255d   /   ext4 discard,errors=remount-ro   0   1
+    # <file system>   <mount point>   <type>  <options>                   <dump>  <pass>
+    UUID=2b386f58-4a   /               ext4    errors=remount-ro,noatime   0       1
 
-### Disable the superfluous weekly cron job for TRIM
+## Memory Disk
 
-    sudo mv -v /etc/cron.weekly/fstrim /fstrim
+Things that do a lot of writes but can be thrown away at shutdown are good
+candidates for memory disks.
 
-### Swap
+### Temporary Files
+
+House temporary files in memory so we don't waste writes to SSD.
+
+`/etc/fstab`:
+
+    # <file system>   <mount point>   <type>  <options>                   <dump>  <pass>
+    tmpfs              /tmp            tmpfs   defaults,noatime,mode=1777  0       0
+    tmpfs              /var/spool      tmpfs   defaults,noatime,mode=1777  0       0
+
+### Browser cache
+
+Also browser cache can go in memory since its a heavy writer.  Let's just do
+Chromium for now.
+
+    mkdir -p /tmp/stav/cache/chromium
+    rm -rf ~/.cache/chromium
+    ln -s /tmp/stav/cache/chromium ~/.cache/chromium
+
+`/et/rc.local`:
+
+    for user in stav; do
+      DIR=/tmp/$user/cache/chromium
+      sudo -u $user -- sh -c "mkdir -p $DIR && chmod -R 700 /tmp/$user"
+    done
+
+* http://yktoo.com/en/blog/post/233
+
+## Scheduler
+
+Make sure we are using `deadline`, not cfq.
+
+`/sys/block/sda/queue/scheduler`:
+
+    noop [deadline] cfq
+
+`/etc/default/grub`:
+
+    GRUB_CMDLINE_LINUX_DEFAULT="quiet splash elevator=deadline"
+
+Then update Grub:
+
+    sudo update-grub2
+
+* http://bernaerts.dyndns.org/linux/74-ubuntu/250-ubuntu-tweaks-ssd#h3-change-default-scheduler
+
+## Swap
 
 `/etc/sysctl.conf`:
 
     # Sharply reduce swap inclination
-    vm.swappiness=1
+    vm.swappiness=0
 
     # Improve cache management
     vm.vfs_cache_pressure=50
 
-### Notes
+## TRIM
 
-Limit the write actions of Chrome and Chromium
+Ubuntu already comes with a weekly cron job to trim discarded blocks:
+`/etc/cron.weekly/fstrim`.  It is not advised to use "discard" in fstab because
+it can result in performance issues when deleting a large number of small files.
 
-Check which scheduler is being used
+## Notes
 
-    cat /sys/block/sda/queue/scheduler
+Reserve 10% SSD unallocated for over-provisioning
 
 Do NOT enable hibernation
 
-Windows: Dual boot? Don't let Windows kill your SSD. De-fragmentation will kill your SSD in a very short time, because of the multitude of write actions that it causes.
+Windows: Dual boot? De-fragmentation will kill your SSD because of the many
+write actions that it causes.
 
 * https://sites.google.com/site/easylinuxtipsproject/ssd
