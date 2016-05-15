@@ -1,9 +1,12 @@
 baseurl = "http://stav.github.io/"
 languageCode = "en-us"
-title = "Stav's Awesome Hugo Site"
-theme = "hugo-theme-bleak"
+title = "O my garsh, stuff about computers"
+description = "O my garsh, stuff about computers here is."
+theme = "hugo-bootstrap-premium"
+copyright = "2016 Steven Almeroth"
 
 [params]
   author = "Steven Almeroth"
   description = "Stav's Awesome Hugo Site"
   githubuser = "stav"
+  logo = "/images/O.png"

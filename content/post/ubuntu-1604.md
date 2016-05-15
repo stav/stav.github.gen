@@ -9,8 +9,6 @@ not going to show how to install Ubuntu, that is available all over the net.
 What I will describe is what I did after install to get my workstation back up
 and running with what I need to do Python development._
 
-I install Ubuntu 16.04 on 3 May 2016.
-
 For me, a sub-average long-time software developer, Ubuntu is a great operating
 system.  Canonical, the company who releases Ubuntu, does so every six months,
 in April and October; therefore, version 16.04 was released in April 2016.
@@ -42,13 +40,15 @@ files in a GitHub repo, see *Local dotfiles* below.
 The main things I backed up were:
 
 * `~/bin/`
+* `~/.bash/.bash_functions_private`
 * `~/.config/sublime-text-3/Packages/User/`
 * `~/.gitconfig`
 * `~/.hgrc`
 * `~/.s3cfg`
 * `~/.scrapy.cfg`
-* I forgot my bookmarks
-* Also I should have backed up my E-mail settings from Thunderbird
+* e-mail settings from Thunderbird
+* nginx stuff
+* bookmarks
 
 So here is my list of things I had to do to after the install to get up and
 running with a fresh Ubuntu.
@@ -134,22 +134,24 @@ Add under help menu.
 
 ### System tools
 
-    sudo apt-get install bleachbit hardinfo indicator-multiload synaptic gdebi ubuntu-restricted-extras tree
+    sudo apt-get install bleachbit hardinfo synaptic gdebi ubuntu-restricted-extras
 
 ### Development
 
     sudo apt-get install build-essential checkinstall libglib2.0-dev libgtk2.0-dev libvte-dev
-    sudo apt-get install vim git git-extras git-cola gitg meld mysql-client mysql-server
+    sudo apt-get install vim git git-extras gitg meld tree
+    sudo apt-get install mysql-client mysql-server
     sudo apt-get install python-pip python3-pip
     sudo -H pip install virtualenvwrapper
     URL='https://www.valentina-db.com/en/studio/download/current/vstudio_lin_32_debian?format=raw'; FILE=`mktemp --suffix=.deb`; echo "Downloading to $FILE"; wget "$URL" --output-document=$FILE --no-check-certificate && sudo dpkg -i $FILE; ll $FILE
 
 ### Applications
 
-    sudo apt-get install mpv chromium-browser deluge deluged
+    sudo apt-get install chromium-browser deluge deluged gimp mpv
 
 ### Ubuntu
 
+    sudo apt-get install indicator-multiload touchpad-indicator
     echo "Cleaning Up" && sudo apt-get -f install && sudo apt-get autoremove && sudo apt-get -y autoclean && sudo apt-get -y clean
 
 #### Xkill shortcut
@@ -161,7 +163,7 @@ Add under help menu.
     git clone git@github.com:stav/dotfiles.git ~/.bash
     cd ~/.bash
     ./install.sh
-    add .bash_functions_private
+    # .bash_functions_private
 
 ### Collaboration
 
