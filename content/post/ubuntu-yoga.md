@@ -4,22 +4,21 @@ title = "Lenovo Yoga Ultrabook SSD Tweaks"
 
 +++
 
-My Lenovo Yoga 2 Pro 13 is a wonderful machine and I want to take care the
-solid state device a.k.a. "hard-drive".  This is done by telling the operating
-system not to do too many unnecessary writes and configuring the temp dir to
-reside in memory.
+My Lenovo Yoga 2 Pro 13 is a wonderful machine and I want to take care of the
+solid state device a.k.a. "hard-drive".  Basically I want to reduce unnecessary
+writes, for example by configuring the tmp dir to reside in memory.
 
 System used: Grub2 | Linux | Debian | Ubuntu
 
 ## Ignore Access Time
 
-Use the `noatime` flag to tell OS not to update journal access time to files or
-directories.
+Use the `noatime` flag to tell the OS not to update the journal access time for
+files or directories.
 
 `/etc/fstab`:
 
-    # <file system>   <mount point>   <type>  <options>                   <dump>  <pass>
-    UUID=2b386f58-4a   /               ext4    errors=remount-ro,noatime   0       1
+    # file system    mp type options                   dump pass
+    UUID=2b386f58-4a /  ext4 errors=remount-ro,noatime  0    1
 
 ## Memory Disk
 
@@ -28,18 +27,18 @@ candidates for memory disks.
 
 ### Temporary Files
 
-House temporary files in memory so we don't waste writes to SSD.
+House temporary files in memory so we don't waste writes to the SSD.
 
 `/etc/fstab`:
 
-    # <file system>   <mount point>   <type>  <options>                   <dump>  <pass>
-    tmpfs              /tmp            tmpfs   defaults,noatime,mode=1777  0       0
-    tmpfs              /var/spool      tmpfs   defaults,noatime,mode=1777  0       0
+    # fsys  mount point  type   options                     dump pass
+    tmpfs   /tmp         tmpfs  defaults,noatime,mode=1777   0    0
+    tmpfs   /var/spool   tmpfs  defaults,noatime,mode=1777   0    0
 
 ### Browser cache
 
-Also browser cache can go in memory since its a heavy writer.  Let's just do
-Chromium for now.
+Also browser cache can go in memory since its a heavy writer.  I just did
+Chromium since that's mainly what I use.  All I do is just create a link.
 
     mkdir -p /tmp/stav/cache/chromium
     rm -rf ~/.cache/chromium

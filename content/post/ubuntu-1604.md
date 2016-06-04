@@ -31,7 +31,7 @@ Cons:
 
 - the installer had some bug that wouldn't let me partition my drive volumes
   so I couldn't remove WIndows and join all my empty space and I had to stick
-  with what I had before.
+  with the partitioning I had prior.
 
 Note: You are going to have to backup your current files to another partition
 like I did or you could use an external drive or USB stick.  I keep my bash
@@ -46,7 +46,9 @@ The main things I backed up were:
 * `~/.hgrc`
 * `~/.s3cfg`
 * `~/.scrapy.cfg`
+* `/etc/hosts`
 * e-mail settings from Thunderbird
+* ssh config & keys (perhaps better to just create new ones)
 * nginx stuff
 * bookmarks
 
@@ -57,12 +59,19 @@ running with a fresh Ubuntu.
 
     sudo apt-get update && sudo apt-get upgrade
 
-### PGP key
+### GPG keys
 
     ssh-keygen -t rsa -b 4096 -C "stav@example.com"
     ssh-add ~/.ssh/id_rsa
     sudo apt-get install xclip
     xclip -sel clip < ~/.ssh/id_rsa.pub
+
+Note that new keys will have to be uploaded to remotes:
+
+* [GitHub](https://github.com/settings/keys "GitHub keys page")
+* [Bitbucket](https://bitbucket.org/account/user/stav/ssh-keys/ "Bitbucket keys
+    page")
+* Work sites
 
 ### Sublime Text
 
