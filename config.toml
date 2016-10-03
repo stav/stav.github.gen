@@ -1,7 +1,7 @@
 baseurl = "http://stav.github.io/"
 languageCode = "en-us"
-title = "O my garsh, stuff about computers"
-description = "O my garsh, stuff about computers here is."
+title = "My stuff about computers"
+description = "O stuff here is."
 theme = "hugo-zen"
 copyright = "2016 Steven Almeroth"
 
