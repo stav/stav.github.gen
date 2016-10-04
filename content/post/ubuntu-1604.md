@@ -1,5 +1,5 @@
 +++
-date = "2016-05-10T19:30:42-06:00"
+date = "2016-06-01"
 title = "What to do after installing Ubuntu 16.04"
 
 +++
