@@ -1,6 +1,6 @@
 .PHONY: init test deploy clean
 
-REPO_NAME    = stav.hugo
+REPO_NAME    = stav.github.gen
 REPO_URI    := git@github.com:stav/$(REPO_NAME).git
 REPO_REMOTE := $(shell git remote)
 RENDER_DIR  := ~/Work/Hugo/stav.github.io
